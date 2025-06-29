@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+#
+# Pre-commit hooks for Go
+set -e
+
+if [[ -x "$(command -v golangci-lint)" ]]; then
+    echo "Running golangci-lint..."
+    golangci-lint run
+elif [[ -x "$(command -v gofmt)" ]]; then
+    echo "golangci-lint not found, running gofmt..."
+    if ! gofmt -l . | grep -q .; then
+        echo "gofmt: all files are properly formatted"
+    else
+        echo "gofmt: the following files need formatting:"
+        gofmt -l .
+        echo "Run 'gofmt -w .' to fix formatting issues"
+        exit 1
+    fi
+else
+    echo "gofmt not found, exiting"
+    exit 1
+fi
